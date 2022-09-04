@@ -8,21 +8,15 @@ async def test_url(url):
     ext = tldextract.extract(url)
     subd = ext.subdomain
     if subd != '':
-        base_url = proto + '://' + subd  + '.' + ext.registered_domain
+        base_url = f'{proto}://{subd}.{ext.registered_domain}'
     else:
-        base_url = proto + '://' + ext.registered_domain
+        base_url = f'{proto}://{ext.registered_domain}'
 
     if url.endswith('/') == False and base_url.endswith('/') == True:
-        if url + '/' != base_url:
+        if f'{url}/' != base_url:
             await clout(url)
-        else:
-            pass
     elif url.endswith('/') == True and base_url.endswith('/') == False:
-        if url != base_url + '/':
+        if url != f'{base_url}/':
             await clout(url)
-        else:
-            pass
     elif url != base_url:
         await clout(url)
-    else:
-        pass

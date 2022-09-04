@@ -27,7 +27,7 @@ def smsg(msg, symbol):
         tmp = msg.split(' : ')
         msg = f'{C}{tmp[0]} : {W}{tmp[1]}'
 
-    if symbol == None:
+    if symbol is None:
         print(f'{G}{msg}{W}')
     else:
         print(f'{G}[{symbol}] {C}{msg}{W}')

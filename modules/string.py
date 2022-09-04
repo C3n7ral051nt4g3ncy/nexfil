@@ -10,9 +10,7 @@ async def test_string(session, url, data):
             print(f'{R}[-] {Y}[{url}] {W}[{response.status}]')
         else:
             resp_body = await response.text()
-            if data in resp_body:
-                pass
-            else:
+            if data not in resp_body:
                 await clout(response.url)
     except asyncio.exceptions.TimeoutError:
         #print(f'{Y}[!] Timeout :{C} {url}{W}')

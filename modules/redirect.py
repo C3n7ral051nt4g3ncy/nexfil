@@ -13,9 +13,7 @@ async def test_redirect(session, url):
         return
     try:
         location = response.headers['Location']
-        if url != location:
-            pass
-        else:
+        if url == location:
             await clout(url)
     except KeyError:
         await clout(url)

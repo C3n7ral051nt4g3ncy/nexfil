@@ -65,7 +65,7 @@ def chk_update():
 if update == True:
     chk_update()
 
-if uname == None and ulist == None and fname == None:
+if uname is None and ulist is None and fname is None:
     print('''
 Please provide one of the following :
 \t* Username [-u]
@@ -76,13 +76,7 @@ Please provide one of the following :
 
 if uname != None:
     mode = 'single'
-    if len(uname) > 0:
-        if uname.isspace():
-            print('Error : Username Missing!')
-            exit()
-        else:
-            pass
-    else:
+    if len(uname) > 0 and uname.isspace() or len(uname) <= 0:
         print('Error : Username Missing!')
         exit()
 elif fname != None:
@@ -95,9 +89,6 @@ elif ulist != None:
         exit()
     else:
         ulist = tmp.split(',')
-else:
-    pass
-
 from modules.printer import smsg
 from modules.printer import emsg
 from modules.printer import wmsg
@@ -137,8 +128,8 @@ gh_version = ''
 twitter_url = ''
 comms_url = ''
 codes = [200, 301, 302, 403, 405, 410, 418, 500]
-log_file = home + '/.local/share/nexfil/exceptions.log'
-loc_data = home + '/.local/share/nexfil/dumps/'
+log_file = f'{home}/.local/share/nexfil/exceptions.log'
+loc_data = f'{home}/.local/share/nexfil/dumps/'
 
 def banner():
     with open('metadata.json', 'r') as metadata:
@@ -154,7 +145,7 @@ __   _ _____ _     _ _____ _____ _
 
     smsg(f'{banner}', None)
     print()
-    smsg(f'Created By   : thewhiteh4t', '>')
+    smsg('Created By   : thewhiteh4t', '>')
     smsg(f' |---> Twitter   : {twitter_url}', None)
     smsg(f' |---> Community : {comms_url}', None)
     smsg(f'Version      : {script_v}', '>')
@@ -180,22 +171,16 @@ async def query(session, url, test, data, uname):
         else:
             response = await session.head(url, allow_redirects=True)
             if response.status in codes:
-                if test == None:
+                if test is None:
                     await clout(response.url)
                 elif test == 'url':
                     await test_url(response.url)
                 elif test == 'subdomain':
                     await test_sub(url, response.url)
-                else:
-                    pass
             elif response.status == 404 and test == 'method':
                 await test_method(session, url)
             elif response.status != 404:
                 errors.append(url)
-                pass
-            else:
-                pass
-
     except asyncio.exceptions.TimeoutError:
         timedout.append(url)
     except aiohttp.client_exceptions.ClientConnectorError:
@@ -207,18 +192,12 @@ async def query(session, url, test, data, uname):
 def autosave(uname, ulist, mode, found, start_time, end_time):
     if not path.exists(loc_data):
         makedirs(loc_data)
-    else:
-        pass
-
     if mode == 'single':
-        filename = f'{uname}_{str(int(datetime.now().timestamp()))}.txt'
+        filename = f'{uname}_{int(datetime.now().timestamp())}.txt'
         username = uname
-    elif mode == 'list' or mode == 'file':
-        filename = f'session_{str(int(datetime.now().timestamp()))}.txt'
+    elif mode in ['list', 'file']:
+        filename = f'session_{int(datetime.now().timestamp())}.txt'
         username = ulist
-    else:
-        pass
-
     with open(loc_data + filename, 'w') as outfile:
         outfile.write(f'nexfil v{script_v}\n')
         outfile.write(f'{"-" * 40}\n')
@@ -294,28 +273,24 @@ if __name__ == "__main__":
 
         start_time = datetime.now()
 
-        if mode == 'single':
-            asyncio.run(main(uname))
-        elif mode == 'list':
-            for uname in ulist:
-                ulist[ulist.index(uname)] = uname.strip()
-                asyncio.run(main(uname))
-        elif mode == 'file':
+        if mode == 'file':
             ulist = []
             try:
                 with open(fname, 'r') as wdlist:
                     tmp = wdlist.readlines()
-                    for user in tmp:
-                        ulist.append(user.strip())
+                    ulist.extend(user.strip() for user in tmp)
                 for uname in ulist:
                     uname = uname.strip()
                     asyncio.run(main(uname))
             except Exception as exc:
                 wmsg(f'Exception [file] : {str(exc)}')
                 exit()
-        else:
-            pass
-
+        elif mode == 'list':
+            for uname in ulist:
+                ulist[ulist.index(uname)] = uname.strip()
+                asyncio.run(main(uname))
+        elif mode == 'single':
+            asyncio.run(main(uname))
         end_time = datetime.now()
         delta = end_time - start_time
         str_d = datetime.strptime(str(delta), '%H:%M:%S.%f')
@@ -330,9 +305,7 @@ if __name__ == "__main__":
 
         if len(found) != 0:
             autosave(uname, ulist, mode, found, start_time, end_time)
-        else:
-            pass
     except KeyboardInterrupt:
         print()
-        emsg(f'Keyboard Interrupt.')
+        emsg('Keyboard Interrupt.')
         exit()

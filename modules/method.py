@@ -6,8 +6,6 @@ async def test_method(session, url):
         response = await session.get(url, allow_redirects=True)
         if response.status != 404:
             await clout(response.url)
-        else:
-            pass
     except asyncio.exceptions.TimeoutError:
         #print(f'{Y}[!] Timeout :{C} {url}{W}')
         return

@@ -10,20 +10,14 @@ async def test_api(session, url, endpoint):
                 tmp_vars = ['results', 'users', 'username']
                 for var in tmp_vars:
                     try:
-                        if resp_body.get(var) != None:
-                            if len(resp_body[var]) != 0:
-                                await clout(url)
-                                return
-                            else:
-                                pass
-                        else:
-                            pass
+                        if (
+                            resp_body.get(var) != None
+                            and len(resp_body[var]) != 0
+                        ):
+                            await clout(url)
+                            return
                     except:
                         pass
-            else:
-                pass
-        else:
-            pass
     except Exception as exc:
         #print(f'{Y}[!] Exception [test_api] [{url}] :{W} {exc}')
         return
